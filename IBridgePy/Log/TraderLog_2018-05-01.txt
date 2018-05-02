@@ -1,0 +1,41 @@
+2018-05-01 23:37:46.561653-04:00: IBridgePy.IBAccountManager:EXIT errorId = -1, errorCode = 502, error message: Couldn't connect to TWS.  Confirm that "Enable ActiveX and Socket Clients" is enabled on the TWS "Configure->API" menu.
+2018-05-01 23:37:46.562653-04:00: IBridgePy.IBAccountManager:EXIT IBridgePy version= 2.20180427
+2018-05-01 23:38:23.665932-04:00: IBridgePy.IBAccountManager:EXIT errorId = -1, errorCode = 502, error message: Couldn't connect to TWS.  Confirm that "Enable ActiveX and Socket Clients" is enabled on the TWS "Configure->API" menu.
+2018-05-01 23:38:23.665932-04:00: IBridgePy.IBAccountManager:EXIT IBridgePy version= 2.20180427
+2018-05-01 23:39:04.017289-04:00: IBridgePy.IBAccountManager:EXIT errorId = -1, errorCode = 502, error message: Couldn't connect to TWS.  Confirm that "Enable ActiveX and Socket Clients" is enabled on the TWS "Configure->API" menu.
+2018-05-01 23:39:04.018289-04:00: IBridgePy.IBAccountManager:EXIT IBridgePy version= 2.20180427
+2018-05-01 23:39:58.962869-04:00: IBridgePy version 2.20180427
+2018-05-01 23:39:58.963370-04:00: fileName = example_show_positions.py
+2018-05-01 23:39:59.195991-04:00: IBridgePy.Trader_single_account::validateAccountCode: EXIT, unexpect accountN=DU230006
+2018-05-01 23:39:59.195991-04:00: IBridgePy.Trader_single_account::validateAccountCode: Input accoutCode DU230024
+2018-05-01 23:39:59.196991-04:00: Please contact with IBridgePy@gmail.com about IBridgePy for Multi Account
+2018-05-01 23:40:55.953966-04:00: IBridgePy version 2.20180427
+2018-05-01 23:40:55.953966-04:00: fileName = example_show_positions.py
+2018-05-01 23:40:56.188082-04:00: IBridgePy.Trader_single_account::validateAccountCode: EXIT, unexpect accountN=DU230006
+2018-05-01 23:40:56.188583-04:00: IBridgePy.Trader_single_account::validateAccountCode: Input accoutCode DU230024
+2018-05-01 23:40:56.189584-04:00: Please contact with IBridgePy@gmail.com about IBridgePy for Multi Account
+2018-05-01 23:41:10.274105-04:00: IBridgePy version 2.20180427
+2018-05-01 23:41:10.274105-04:00: fileName = example_get_historical_data.py
+2018-05-01 23:41:10.506212-04:00: IBridgePy.Trader_single_account::validateAccountCode: EXIT, unexpect accountN=DU230006
+2018-05-01 23:41:10.506212-04:00: IBridgePy.Trader_single_account::validateAccountCode: Input accoutCode DU230024
+2018-05-01 23:41:10.507212-04:00: Please contact with IBridgePy@gmail.com about IBridgePy for Multi Account
+2018-05-01 23:41:45.496638-04:00: IBridgePy version 2.20180427
+2018-05-01 23:41:45.496638-04:00: fileName = example_show_positions.py
+2018-05-01 23:41:45.734746-04:00: ####    Starting to initialize trader    ####
+2018-05-01 23:41:45.734746-04:00: ##    ACCOUNT Balance  DU230006  ##
+2018-05-01 23:41:45.735747-04:00: CASH=1007486.69
+2018-05-01 23:41:45.736747-04:00: portfolio_value=1008477.96
+2018-05-01 23:41:45.736747-04:00: positions_value=0.0
+2018-05-01 23:41:45.737747-04:00: ##    POSITIONS DU230006   ##
+2018-05-01 23:41:45.737747-04:00: Symbol Amount Cost_basis Latest_profit
+2018-05-01 23:41:45.738747-04:00: CASH,GBP,JPY 20000 150.531 nan
+2018-05-01 23:41:45.738747-04:00: ##    END    ##
+2018-05-01 23:41:45.739748-04:00: ##    NO any order    ##
+2018-05-01 23:41:45.740748-04:00: ####    Initialize trader COMPLETED    ####
+2018-05-02 00:00:01.269182-04:00: IBridgePy.IBAccountManager:errorId = -1, errorCode = 2105, error message: HMDS data farm connection is broken:ushmds
+2018-05-02 00:01:17.302328-04:00: IBridgePy.IBAccountManager:errorId = -1, errorCode = 2105, error message: HMDS data farm connection is broken:ushmds
+2018-05-02 00:02:33.337706-04:00: IBridgePy.IBAccountManager:errorId = -1, errorCode = 2105, error message: HMDS data farm connection is broken:ushmds
+2018-05-02 00:02:33.338207-04:00: IBridgePy.IBAccountManager:errorId = -1, errorCode = 2105, error message: HMDS data farm connection is broken:ushmds
+2018-05-02 00:02:39.341278-04:00: IBridgePy.IBAccountManager:errorId = -1, errorCode = 2105, error message: HMDS data farm connection is broken:ushmds
+2018-05-02 00:02:46.344717-04:00: IBridgePy.IBAccountManager:errorId = -1, errorCode = 2105, error message: HMDS data farm connection is broken:ushmds
+2018-05-02 00:03:07.355114-04:00: IBridgePy.IBAccountManager:errorId = -1, errorCode = 2105, error message: HMDS data farm connection is broken:ushmds
