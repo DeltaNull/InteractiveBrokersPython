@@ -15,13 +15,13 @@ If you have any questions, please send email to IBridgePy@gmail.com
 '''
 
 #fileName='example_show_positions.py'
-filename='BacktestAlg.py'
+fileName='BacktestAlg.py'
 #fileName='example_get_historical_data.py'
 #fileName='example_show_real_time_prices.py'
 #fileName='example_place_order.py'
 
 #!!!!!! IMPORTANT  !!!!!!!!!!!!!!!!!
-accountCode='DU230006' # You need to change it to your own IB account number
+accountCode='DU230004' # You need to change it to your own IB account number
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 '''
@@ -29,7 +29,7 @@ In the default mode, handle_data will be called every second.
 To run Quantopian algorithms, handle_data will be called every minute
 Please use the following runMode
 '''
-#runMode='run_like_quantopian'
+runMode='run_like_quantopian'
 
 with open("configuration.txt") as f:
     script = f.read()

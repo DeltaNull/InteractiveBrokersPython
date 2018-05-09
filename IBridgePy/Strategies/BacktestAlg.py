@@ -1,239 +1,167 @@
-from quantopian.algorithm import attach_pipeline, pipeline_output
-from quantopian.pipeline import Pipeline
-from quantopian.pipeline.data.builtin import USEquityPricing
-from quantopian.pipeline.factors import AverageDollarVolume, CustomFactor, SimpleMovingAverage, Latest
-from quantopian.pipeline.filters.morningstar import Q500US, Q1500US
-from quantopian.pipeline.data import morningstar
-
-import numpy as np  # we're using this for various math operations
-from scipy import stats  # using this for the reg slope
+import numpy as np
 import pandas as pd
+from scipy import stats
 
 
 def slope(ts):
-    """
-    Input: Price time series.
-    Output: Annualized exponential regression slope, multipl
-    """
     x = np.arange(len(ts))
     log_ts = np.log(ts)
     slope, intercept, r_value, p_value, std_err = stats.linregress(x, log_ts)
     annualized_slope = (np.power(np.exp(slope), 250) - 1) * 100
     return annualized_slope * (r_value ** 2)
 
+class MarketCap(CustomFactor):
+    inputs = [USEquityPricing.close, morningstar.valuation.shares_outstanding]
+    window_length = 1
 
-def inv_vola_calc(ts):
-    """
-    Input: Price time series.
-    Output: Inverse exponential moving average standard deviation.
-    Purpose: Provides inverse vola for use in vola parity position sizing.
-    """
-    returns = np.log(ts).diff()
-    stddev = returns.ewm(halflife=20, ignore_na=True, min_periods=0,
-                         adjust=True).std(bias=False).dropna()
-    return 1 / stddev.iloc[-1]
+    def compute(self, today, assets, out, close, shares):
+        out[:] = close[-1] * shares[-1]
 
+    # Creating a filter for all the stocks within the market cap requirements
+def make_pipeline(context,sma_window_length, market_cap_limit):
+    pipe = Pipeline()
 
-def initialize(context):
-    """
-    Setting our variables. Modify here to test different
-    iterations of the model.
-    """
+    # Now only stocks in the top N largest companies by market cap
+    market_cap = MarketCap()
+    top_N_market_cap = market_cap.top(market_cap_limit)
 
-    # Investment Universe 1 = Q500US, 2 = Q1500US
-    context.investment_set = 1
+    #Other filters to make sure we are getting a clean universe. Primary and domestic shares only.
+    is_primary_share = morningstar.share_class_reference.is_primary_share.latest
+    is_not_adr = ~morningstar.share_class_reference.is_depositary_receipt.latest
 
-    # This version uses the average of two momentum slopes.
-    # Want just one? Set them both to the same number.
-    context.momentum_window = 60  # first momentum window.
-    context.momentum_window2 = 60  # second momentum window
+    #### TREND FITLER ###########
+    #### If current stock price is bellow sma_window_length(100) moving average price, do not buy.
 
-    # Limit minimum slope. Keep in mind that shorter momentum windows
-    # yield more extreme slope numbers. Adjust one, and you may want
-    # to adjust the other.
-    context.minimum_momentum = 0  # momentum score cap
+    if context.use_stock_trend_filter:
+        latest_price = USEquityPricing.close.latest
+        sma = SimpleMovingAverage(inputs=[USEquityPricing.close], window_length=sma_window_length)
+        above_sma = (latest_price > sma)
+        initial_screen = (above_sma & top_N_market_cap & is_primary_share & is_not_adr)
+        log.info("Init: Stock trend filter ON")
+    else: #### TREND FITLER OFF  ##############
+        initial_screen = (top_N_market_cap & is_primary_share & is_not_adr)
+        log.info("Init: Stock trend filter OFF")
 
-    # Fixed number of stocks in the portfolio. How diversified
-    # do you want to be?
-    context.number_of_stocks = 25  # portfolio size
-    context.index_id = sid(8554)  # identifier for the SPY. used for trend filter.
-    context.index_average_window = 100  # moving average periods for index filter
+    pipe.add(market_cap, "market_cap")
 
-    # enable/disable trend filter.
-    context.index_trend_filter = True
+    pipe.set_screen(initial_screen)
 
-    # Most momentum research excludes most recent data.
-    context.exclude_days = 5  # excludes most recent days from momentum calculation
-
-    # Set trading frequency here.
-    context.trading_frequency = date_rules.month_start()
-
-    # identifier for the cash management etf, if used.
-    context.use_bond_etf = True
-    context.bond_etf = sid(23870)
-
-    # 1 = inv.vola. 2 = equal size. Suggest to implement
-    # market cap and inverse market cap as well. There's
-    # lots of room for development here.
-    context.size_method = 1
-
-    # Schedule rebalance
-    schedule_function(
-        my_rebalance,
-        context.trading_frequency,
-        time_rules.market_open(
-            hours=1))
-
-    # Schedule daily recording of number of positions - For display in back
-    # test results only.
-    schedule_function(
-        my_record_vars,
-        date_rules.every_day(),
-        time_rules.market_close())
-
-    # Create our dynamic stock selector - getting the top 500 most liquid US
-    # stocks.
-
-    if (context.investment_set == 1):
-        inv_set = Q500US()
-    elif (context.investment_set == 2):
-        inv_set = Q1500US()
-
-    attach_pipeline(make_pipeline(inv_set), 'investment_universe')
-
-
-def make_pipeline(investment_set):
-    """
-    This will return the selected stocks by market cap, dynamically updated.
-    """
-    # Base universe
-    base_universe = investment_set
-    yesterday_close = USEquityPricing.close.latest
-
-    pipe = Pipeline(
-        screen=base_universe,
-        columns={
-            'close': yesterday_close,
-        }
-    )
     return pipe
 
+    # Create pipeline before market open of tradeable stocks.
+def before_trading_start(context, data):
+    context.selected_universe = pipeline_output('screen')
+    context.assets = context.selected_universe.index
 
-def my_rebalance(context, data):
-    """
-    Our monthly rebalancing routine
-    """
+def initialize(context):
+    context.market = sid(8554)                      # Stock or fund used for market filter.
+    context.market_window = 100                     # Period lookback for market filter.
+    context.atr_window = 20                         # Period lookback for ATR calculation.
+    context.talib_window = context.atr_window + 5   # Used in position sizing for ATR calculation. Not sure what +5 does.
+    context.risk_factor = 0.01                     # 0.01 = less position, more % but more risk. Take this out and replace with my method.#######
 
-    # First update the stock universe.
-    context.output = pipeline_output('investment_universe')
-    context.security_list = context.output.index
+    context.momentum_window_length = 60             # Period lookback for momentum calculations.
+    context.market_cap_limit = 500                  # Limit number of stocks based on market cap.
+    context.rank_table_percentile = .3             # Top .x of stocks on ranking table.
+    context.significant_position_difference = 0.1   # Rebalance only if target weight is greater than .x difference.
+    context.min_momentum = 0.000                    # Minimum adjusted momentum requirement.
+    context.leverage_factor = 1.0                   # 1=2154%. Guy's version is 1.4=3226%. Determines how much leverage is used.
+    context.use_stock_trend_filter = 0              # Either 0 = Off, 1 = On.
+    context.sma_window_length = 200                 # Used for the stock trend filter.
+    context.use_market_trend_filter = 1             # Either 0 = Off, 1 = On. Filter on SPY. 0 wont work!
+    context.use_average_true_range = 1              # Either 0 = Off, 1 = On. Manage risk with individual stock volatility.
+    context.average_true_rage_multipl_factor = 1    # Change the weight of the ATR. 1327%.
 
-    # Get data
-    hist_window = max(context.momentum_window,
-                      context.momentum_window2) + context.exclude_days
+    # Bring up pipeline for display as a screen.
+    attach_pipeline(make_pipeline(context, context.sma_window_length,
+                                  context.market_cap_limit), 'screen')
 
-    hist = data.history(context.security_list, "close", hist_window, "1d")
+    # Schedule my rebalance function
+    schedule_function(rebalance,
+                      date_rules.month_start(),
+                      time_rules.market_open(hours=1))
 
-    data_end = -1 * (context.exclude_days + 1)  # exclude most recent data
+    # Cancel all open orders at the end of each day.
+    schedule_function(cancel_open_orders, date_rules.every_day(), time_rules.market_close())
+    set_slippage(slippage.FixedSlippage(spread=0.00))
 
-    momentum1_start = -1 * (context.momentum_window + context.exclude_days)
-    momentum_hist1 = hist[momentum1_start:data_end]
+def cancel_open_orders(context, data):
+    open_orders = get_open_orders()
+    for security in open_orders:
+        for order in open_orders[security]:
+            cancel_order(order)
 
-    momentum2_start = -1 * (context.momentum_window2 + context.exclude_days)
-    momentum_hist2 = hist[momentum2_start:data_end]
+    #record(lever=context.account.leverage,
+    record(exposure=context.account.leverage)
 
-    # Calculate momentum scores for all stocks.
-    momentum_list = momentum_hist1.apply(slope)  # Mom Window 1
-    momentum_list2 = momentum_hist2.apply(slope)  # Mom Window 2
+def handle_data(context, data):
+    pass
 
-    # Combine the lists and make average
-    momentum_concat = pd.concat((momentum_list, momentum_list2))
-    mom_by_row = momentum_concat.groupby(momentum_concat.index)
-    mom_means = mom_by_row.mean()
+def rebalance(context, data):
+    highs = data.history(context.assets, "high", context.talib_window, "1d")
+    lows = data.history(context.assets, "low", context.talib_window, "1d")
+    closes = data.history(context.assets, "price", context.market_window, "1d")
 
-    # Sort the momentum list, and we've got ourselves a ranking table.
-    ranking_table = mom_means.sort_values(ascending=False)
+    estimated_cash_balance = context.portfolio.cash
+    slopes = closes[context.selected_universe.index].tail(context.momentum_window_length).apply(slope)
 
-    # Get the top X stocks, based on the setting above. Slice the dictionary.
-    # These are the stocks we want to buy.
-    buy_list = ranking_table[:context.number_of_stocks]
-    final_buy_list = buy_list[buy_list > context.minimum_momentum]  # those who passed minimum slope requirement
+    print("Made it")
+    print(slopes.order(ascending=False).head(10))
+    slopes = slopes[slopes > context.min_momentum]
+    ranking_table = slopes[slopes > slopes.quantile(1 - context.rank_table_percentile)].order(ascending=False)
+    log.info( len(ranking_table.index))
+    # close positions that are no longer in the top of the ranking table
+    positions = context.portfolio.positions
+    for security in positions:
+        price = data.current(security, "price")
+        position_size = positions[security].amount
+        if data.can_trade(security) and security not in ranking_table.index:
+            order_target(security, 0, style=LimitOrder(price))
+            estimated_cash_balance += price * position_size
+        elif data.can_trade(security):
+            new_position_size = get_position_size(context, highs[security], lows[security], closes[security],security)
+            if significant_change_in_position_size(context, new_position_size, position_size):
+                estimated_cost = price * (new_position_size * context.leverage_factor - position_size)
+                order_target(security, new_position_size * context.leverage_factor, style=LimitOrder(price))
+                estimated_cash_balance -= estimated_cost
 
-    # Calculate inverse volatility, for position size.
-    inv_vola_table = hist[buy_list.index].apply(inv_vola_calc)
-    # sum inv.vola for all selected stocks.
-    sum_inv_vola = np.sum(inv_vola_table)
 
-    # Check trend filter if enabled.
-    if (context.index_trend_filter):
-        index_history = data.history(
-            context.index_id,
-            "close",
-            context.index_average_window,
-            "1d")  # Gets index history
-        index_sma = index_history.mean()  # Average of index history
-        current_index = index_history[-1]  # get last element
-        # declare bull if index is over average
-        bull_market = current_index > index_sma
-
-    # if trend filter is used, only buy in bull markets
-    # else always buy
-    if context.index_trend_filter:
-        can_buy = bull_market
+    # Market history is not used with the trend filter disabled
+    # Removed for efficiency
+    if context.use_market_trend_filter:
+        market_history = data.history(context.market, "price", context.market_window, "1d")  ##SPY##
+        current_market_price = market_history[-1]
+        average_market_price = market_history.mean()
     else:
-        can_buy = True
+        average_market_price = 0
 
-    equity_weight = 0.0  # for keeping track of exposure to stocks
-
-    # Sell positions no longer wanted.
-    for security in context.portfolio.positions:
-        if (security not in final_buy_list):
-            if (security.sid != context.bond_etf):
-                # print 'selling %s' % security
-                order_target(security, 0.0)
-
-    vola_target_weights = inv_vola_table / sum_inv_vola
-
-    for security in final_buy_list.index:
-        # allow rebalancing of existing, and new buys if can_buy, i.e. passed trend filter.
-        if (security in context.portfolio.positions) or (can_buy):
-            if (context.size_method == 1):
-                weight = vola_target_weights[security]
-            elif (context.size_method == 2):
-                weight = (1.0 / context.number_of_stocks)
-                print
-                context.number_of_stocks
-            order_target_percent(security, weight)
-            equity_weight += weight
-
-    # Fill remaining portfolio with bond ETF
-    etf_weight = max(1 - equity_weight, 0.0)
-
-    print
-    'equity exposure should be %s ' % equity_weight
-
-    if (context.use_bond_etf):
-        order_target_percent(context.bond_etf, etf_weight)
+    if (current_market_price > average_market_price) :  #if average is 0 then jump in
+        for security in ranking_table.index:
+            if data.can_trade(security) and security not in context.portfolio.positions:
+                new_position_size = get_position_size(context, highs[security], lows[security], closes[security],
+                                                     security)
+                estimated_cost = data.current(security, "price") * new_position_size * context.leverage_factor
+                if estimated_cash_balance > estimated_cost:
+                    order_target(security, new_position_size * context.leverage_factor, style=LimitOrder(data.current(security, "price")))
+                    estimated_cash_balance -= estimated_cost
 
 
-def my_record_vars(context, data):
-    """
-    This routine just records number of open positions and exposure level
-    for display purposes.
-    """
-    etf_exp = 0.0
-    pos_count = 0
-    eq_exp = 0.0
-    for position in context.portfolio.positions.itervalues():
-        pos_count += 1
-        if (position.sid == context.bond_etf):
-            etf_exp += (position.amount * position.last_sale_price) / \
-                       context.portfolio.portfolio_value
-        else:
-            eq_exp += (position.amount * position.last_sale_price) / \
-                      context.portfolio.portfolio_value
+    # Original position sizing is based off of ATR. Use my new method here #######
+def get_position_size(context, highs, lows, closes, security):
+    try:
+        average_true_range = talib.ATR(highs.ffill().dropna().tail(context.talib_window),
+                                       lows.ffill().dropna().tail(context.talib_window),
+                                       closes.ffill().dropna().tail(context.talib_window),
+                                       context.atr_window)[-1] # [-1] gets the last value, as all talib methods are rolling calculations#
+      #  if not context.use_average_true_range: #average_true_range
+       #     average_true_range = 1 #divide by 1 gives... same initial number
+        #    context.average_true_rage_multipl_factor = 1
 
-    record(equity_exposure=eq_exp)
-    record(bond_exposure=etf_exp)
-    record(tot_exposure=context.account.leverage)
-    record(positions=pos_count)
+        return (context.portfolio.portfolio_value * context.risk_factor)  / (average_true_range * context.average_true_rage_multipl_factor)
+    except:
+        log.warn('Insufficient history to calculate risk adjusted size for {0.symbol}'.format(security))
+        return 0
+
+
+def significant_change_in_position_size(context, new_position_size, old_position_size):
+    return np.abs((new_position_size - old_position_size)  / old_position_size) > context.significant_position_difference

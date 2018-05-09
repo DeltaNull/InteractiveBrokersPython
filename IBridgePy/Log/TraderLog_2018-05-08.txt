@@ -1,0 +1,24 @@
+2018-05-08 23:02:21.305374-04:00: IBridgePy version 2.20180427
+2018-05-08 23:02:21.306877-04:00: fileName = example_get_historical_data.py
+2018-05-08 23:02:21.563270-04:00: ####    Starting to initialize trader    ####
+2018-05-08 23:02:21.563771-04:00: ##    ACCOUNT Balance  DU230004  ##
+2018-05-08 23:02:21.564272-04:00: CASH=1006475.59
+2018-05-08 23:02:21.564773-04:00: portfolio_value=1006675.21
+2018-05-08 23:02:21.565274-04:00: positions_value=0.0
+2018-05-08 23:02:21.565774-04:00: ##    NO ANY POSITION    ##
+2018-05-08 23:02:21.566275-04:00: ##    NO any order    ##
+2018-05-08 23:02:21.566275-04:00: ####    Initialize trader COMPLETED    ####
+2018-05-08 23:05:26.567780-04:00: IBridgePy version 2.20180427
+2018-05-08 23:05:26.569283-04:00: fileName = example_get_historical_data.py
+2018-05-08 23:05:39.997933-04:00: IBridgePy version 2.20180427
+2018-05-08 23:05:39.998434-04:00: fileName = example_get_historical_data.py
+2018-05-08 23:06:10.445257-04:00: IBridgePy version 2.20180427
+2018-05-08 23:06:10.445758-04:00: fileName = example_get_historical_data.py
+2018-05-08 23:06:10.699648-04:00: ####    Starting to initialize trader    ####
+2018-05-08 23:06:10.700149-04:00: ##    ACCOUNT Balance  DU230004  ##
+2018-05-08 23:06:10.700650-04:00: CASH=1006475.59
+2018-05-08 23:06:10.701151-04:00: portfolio_value=1006675.21
+2018-05-08 23:06:10.701651-04:00: positions_value=0.0
+2018-05-08 23:06:10.702152-04:00: ##    NO ANY POSITION    ##
+2018-05-08 23:06:10.702653-04:00: ##    NO any order    ##
+2018-05-08 23:06:10.702653-04:00: ####    Initialize trader COMPLETED    ####

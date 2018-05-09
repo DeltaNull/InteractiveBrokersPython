@@ -1,0 +1,137 @@
+2018-05-06 20:57:43.226489-04:00: IBridgePy version 2.20180427
+2018-05-06 20:57:43.227490-04:00: fileName = example_get_historical_data.py
+2018-05-06 20:57:43.503414-04:00: ####    Starting to initialize trader    ####
+2018-05-06 20:57:43.503915-04:00: ##    ACCOUNT Balance  DU230005  ##
+2018-05-06 20:57:43.504416-04:00: CASH=1008477.96
+2018-05-06 20:57:43.504917-04:00: portfolio_value=1008544.46
+2018-05-06 20:57:43.505417-04:00: positions_value=0.0
+2018-05-06 20:57:43.505918-04:00: ##    NO ANY POSITION    ##
+2018-05-06 20:57:43.506419-04:00: ##    NO any order    ##
+2018-05-06 20:57:43.506920-04:00: ####    Initialize trader COMPLETED    ####
+2018-05-06 20:57:44.926603-04:00: IBridgePy.IBAccountManager:EXIT errorId = 4, errorCode = 162, error message: Historical Market Data Service error message:No market data permissions for AMEX STK
+2018-05-06 20:57:44.927104-04:00: IBridgePy.IBAccountManager:EXIT IBridgePy version = 2.20180427
+2018-05-06 21:12:33.377900-04:00: IBridgePy version 2.20180427
+2018-05-06 21:12:33.378401-04:00: fileName = example_place_order.py
+2018-05-06 21:12:33.622276-04:00: ####    Starting to initialize trader    ####
+2018-05-06 21:12:33.622777-04:00: ##    ACCOUNT Balance  DU230005  ##
+2018-05-06 21:12:33.623278-04:00: CASH=1008477.96
+2018-05-06 21:12:33.625782-04:00: portfolio_value=1008544.46
+2018-05-06 21:12:33.626784-04:00: positions_value=0.0
+2018-05-06 21:12:33.627785-04:00: ##    NO ANY POSITION    ##
+2018-05-06 21:12:33.628286-04:00: ##    NO any order    ##
+2018-05-06 21:12:33.628786-04:00: ####    Initialize trader COMPLETED    ####
+2018-05-06 21:12:35.038955-04:00: IBridgePy.IBAccountManager:errorId = 4, errorCode = 399, error message: Order Message:
+BUY 100 EUR.USD Forex
+Warning: Your order size is below the EUR 20000 IdealPro minimum and will be routed as an odd lot order.
+2018-05-06 21:12:46.156051-04:00: ##    ACCOUNT Balance  DU230005  ##
+2018-05-06 21:12:46.156552-04:00: CASH=1008475.96
+2018-05-06 21:12:46.157053-04:00: portfolio_value=1008542.46
+2018-05-06 21:12:46.157554-04:00: positions_value=0.0
+2018-05-06 21:12:46.158054-04:00: ##    POSITIONS DU230005   ##
+2018-05-06 21:12:46.158555-04:00: Symbol Amount Cost_basis Latest_profit
+2018-05-06 21:12:46.159056-04:00: CASH,EUR,USD 100 1.19686 nan
+2018-05-06 21:12:46.160057-04:00: ##    END    ##
+2018-05-06 21:12:46.160558-04:00: ##    Order Status DU230005   ##
+2018-05-06 21:12:46.161059-04:00: reqId=4  Filled BUY MKT 100 shares of CASH,EUR,USD at 1.19686
+2018-05-06 21:12:46.161560-04:00: ##    END    ##
+2018-05-06 21:12:47.162098-04:00: IBridgePy: Disconnect
+2018-05-06 21:14:42.877831-04:00: IBridgePy version 2.20180427
+2018-05-06 21:14:42.878332-04:00: fileName = example_get_historical_data.py
+2018-05-06 21:14:43.146744-04:00: ####    Starting to initialize trader    ####
+2018-05-06 21:14:43.147245-04:00: ##    ACCOUNT Balance  DU230005  ##
+2018-05-06 21:14:43.147746-04:00: CASH=1008475.96
+2018-05-06 21:14:43.148248-04:00: portfolio_value=1008542.46
+2018-05-06 21:14:43.150251-04:00: positions_value=0.0
+2018-05-06 21:14:43.150751-04:00: ##    POSITIONS DU230005   ##
+2018-05-06 21:14:43.151752-04:00: Symbol Amount Cost_basis Latest_profit
+2018-05-06 21:14:43.152253-04:00: CASH,EUR,USD 100 1.21686 nan
+2018-05-06 21:14:43.152754-04:00: ##    END    ##
+2018-05-06 21:14:43.153254-04:00: ##    NO any order    ##
+2018-05-06 21:14:43.153254-04:00: ####    Initialize trader COMPLETED    ####
+2018-05-06 21:14:44.360110-04:00: IBridgePy.IBAccountManager:EXIT errorId = 8, errorCode = 354, error message: Requested market data is not subscribed.
+2018-05-06 21:14:44.361112-04:00: IBridgePy.IBAccountManager:EXIT IBridgePy version = 2.20180427
+2018-05-06 21:15:06.521695-04:00: IBridgePy version 2.20180427
+2018-05-06 21:15:06.522195-04:00: fileName = example_place_order.py
+2018-05-06 21:15:06.765569-04:00: ####    Starting to initialize trader    ####
+2018-05-06 21:15:06.766071-04:00: ##    ACCOUNT Balance  DU230005  ##
+2018-05-06 21:15:06.766571-04:00: CASH=1008475.96
+2018-05-06 21:15:06.767072-04:00: portfolio_value=1008542.46
+2018-05-06 21:15:06.767573-04:00: positions_value=0.0
+2018-05-06 21:15:06.768074-04:00: ##    POSITIONS DU230005   ##
+2018-05-06 21:15:06.768574-04:00: Symbol Amount Cost_basis Latest_profit
+2018-05-06 21:15:06.769075-04:00: CASH,EUR,USD 100 1.21686 nan
+2018-05-06 21:15:06.769576-04:00: ##    END    ##
+2018-05-06 21:15:06.770077-04:00: ##    NO any order    ##
+2018-05-06 21:15:06.770577-04:00: ####    Initialize trader COMPLETED    ####
+2018-05-06 21:15:07.999468-04:00: IBridgePy.IBAccountManager:errorId = 8, errorCode = 399, error message: Order Message:
+BUY 100 EUR.USD Forex
+Warning: Your order size is below the EUR 20000 IdealPro minimum and will be routed as an odd lot order.
+2018-05-06 21:15:19.148614-04:00: ##    ACCOUNT Balance  DU230005  ##
+2018-05-06 21:15:19.150116-04:00: CASH=1008473.99
+2018-05-06 21:15:19.150616-04:00: portfolio_value=1008540.49
+2018-05-06 21:15:19.151117-04:00: positions_value=0.0
+2018-05-06 21:15:19.151618-04:00: ##    POSITIONS DU230005   ##
+2018-05-06 21:15:19.152118-04:00: Symbol Amount Cost_basis Latest_profit
+2018-05-06 21:15:19.152619-04:00: CASH,EUR,USD 200 1.217035 nan
+2018-05-06 21:15:19.153120-04:00: ##    END    ##
+2018-05-06 21:15:19.154121-04:00: ##    Order Status DU230005   ##
+2018-05-06 21:15:19.154622-04:00: reqId=8  Filled BUY MKT 100 shares of CASH,EUR,USD at 1.19721
+2018-05-06 21:15:19.155123-04:00: ##    END    ##
+2018-05-06 21:15:20.155661-04:00: IBridgePy: Disconnect
+2018-05-06 21:15:33.442600-04:00: IBridgePy version 2.20180427
+2018-05-06 21:15:33.443101-04:00: fileName = example_show_real_time_prices.py
+2018-05-06 21:15:33.687477-04:00: ####    Starting to initialize trader    ####
+2018-05-06 21:15:33.688479-04:00: ##    ACCOUNT Balance  DU230005  ##
+2018-05-06 21:15:33.688979-04:00: CASH=1008473.99
+2018-05-06 21:15:33.689480-04:00: portfolio_value=1008540.49
+2018-05-06 21:15:33.689980-04:00: positions_value=0.0
+2018-05-06 21:15:33.690481-04:00: ##    POSITIONS DU230005   ##
+2018-05-06 21:15:33.690982-04:00: Symbol Amount Cost_basis Latest_profit
+2018-05-06 21:15:33.691484-04:00: CASH,EUR,USD 200 1.217035 nan
+2018-05-06 21:15:33.691983-04:00: ##    END    ##
+2018-05-06 21:15:33.692484-04:00: ##    NO any order    ##
+2018-05-06 21:15:33.692985-04:00: ####    Initialize trader COMPLETED    ####
+2018-05-06 21:27:47.781303-04:00: IBridgePy version 2.20180427
+2018-05-06 21:27:47.781303-04:00: fileName = BacktestAlg.py
+2018-05-06 21:29:36.667022-04:00: IBridgePy version 2.20180427
+2018-05-06 21:29:36.667022-04:00: fileName = BacktestAlg.py
+2018-05-06 21:29:55.813976-04:00: IBridgePy version 2.20180427
+2018-05-06 21:29:55.813976-04:00: fileName = BacktestAlg.py
+2018-05-06 21:32:45.377746-04:00: IBridgePy version 2.20180427
+2018-05-06 21:32:45.378247-04:00: fileName = BacktestAlg.py
+2018-05-06 21:36:00.134700-04:00: IBridgePy version 2.20180427
+2018-05-06 21:36:00.134700-04:00: fileName = BacktestAlg.py
+2018-05-06 21:38:38.465254-04:00: IBridgePy version 2.20180427
+2018-05-06 21:38:38.465254-04:00: fileName = BacktestAlg.py
+2018-05-06 21:42:30.603763-04:00: IBridgePy version 2.20180427
+2018-05-06 21:42:30.603763-04:00: fileName = BacktestAlg.py
+2018-05-06 21:43:25.262383-04:00: IBridgePy version 2.20180427
+2018-05-06 21:43:25.262383-04:00: fileName = example_show_positions.py
+2018-05-06 21:43:25.503517-04:00: ####    Starting to initialize trader    ####
+2018-05-06 21:43:25.504517-04:00: ##    ACCOUNT Balance  DU230005  ##
+2018-05-06 21:43:25.504517-04:00: CASH=1008473.96
+2018-05-06 21:43:25.505518-04:00: portfolio_value=1008540.46
+2018-05-06 21:43:25.505518-04:00: positions_value=0.0
+2018-05-06 21:43:25.505518-04:00: ##    POSITIONS DU230005   ##
+2018-05-06 21:43:25.506518-04:00: Symbol Amount Cost_basis Latest_profit
+2018-05-06 21:43:25.506518-04:00: CASH,EUR,USD 200 1.217035 nan
+2018-05-06 21:43:25.507519-04:00: ##    END    ##
+2018-05-06 21:43:25.507519-04:00: ##    NO any order    ##
+2018-05-06 21:43:25.508518-04:00: ####    Initialize trader COMPLETED    ####
+2018-05-06 21:46:35.013747-04:00: IBridgePy version 2.20180427
+2018-05-06 21:46:35.014248-04:00: fileName = BacktestAlg.py
+2018-05-06 21:47:05.040160-04:00: IBridgePy.IBAccountManager::check_timer: request_data failed after 30 seconds
+2018-05-06 21:47:05.040160-04:00: IBridgePy.IBAccountManager::check_timer: notDone items in self.end_check_list
+2018-05-06 21:47:05.044161-04:00:                             reqData  reqId         reqType     status  waiver
+1  -1 Created False reqCurrentTime       1  reqCurrentTime  Submitted   False
+2          -1 Created False reqIds       2          reqIds  Submitted   False
+2018-05-06 21:47:10.048616-04:00: IBridgePy.IBAccountManager::request_data: Re-send request info
+2018-05-07 00:01:18.456311-04:00: IBridgePy.IBAccountManager:errorId = -1, errorCode = 2105, error message: HMDS data farm connection is broken:cashhmds
+2018-05-07 00:02:03.459519-04:00: IBridgePy.IBAccountManager:errorId = -1, errorCode = 2105, error message: HMDS data farm connection is broken:ushmds
+2018-05-07 00:02:33.461157-04:00: IBridgePy.IBAccountManager:errorId = -1, errorCode = 2105, error message: HMDS data farm connection is broken:ushmds
+2018-05-07 00:02:35.461734-04:00: IBridgePy.IBAccountManager:errorId = -1, errorCode = 2105, error message: HMDS data farm connection is broken:ushmds
+2018-05-07 00:02:39.462386-04:00: IBridgePy.IBAccountManager:errorId = -1, errorCode = 2105, error message: HMDS data farm connection is broken:ushmds
+2018-05-07 00:02:55.463493-04:00: IBridgePy.IBAccountManager:errorId = -1, errorCode = 2105, error message: HMDS data farm connection is broken:ushmds
+2018-05-07 00:05:49.475607-04:00: IBridgePy.IBAccountManager:errorId = -1, errorCode = 2105, error message: HMDS data farm connection is broken:cashhmds
+2018-05-07 00:06:09.476866-04:00: IBridgePy.IBAccountManager:errorId = -1, errorCode = 2105, error message: HMDS data farm connection is broken:cashhmds
+2018-05-07 00:06:41.478589-04:00: IBridgePy.IBAccountManager:errorId = -1, errorCode = 2105, error message: HMDS data farm connection is broken:cashhmds
