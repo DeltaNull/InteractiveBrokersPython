@@ -48,6 +48,8 @@ def make_pipeline(context,sma_window_length, market_cap_limit):
 
     return pipe
 
+    #Test
+
     # Create pipeline before market open of tradeable stocks.
 def before_trading_start(context, data):
     context.selected_universe = pipeline_output('screen')
