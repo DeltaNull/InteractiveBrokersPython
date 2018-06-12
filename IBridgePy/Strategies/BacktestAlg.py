@@ -3,35 +3,36 @@ import pandas as pd
 from scipy import stats
 
 
+    # Annualized exponential regression slope multiplied by 100, multiplied by r squared (adjusted slope/ranking value)
 def slope(ts):
     x = np.arange(len(ts))
     log_ts = np.log(ts)
     slope, intercept, r_value, p_value, std_err = stats.linregress(x, log_ts)
-    annualized_slope = (np.power(np.exp(slope), 250) - 1) * 100
-    return annualized_slope * (r_value ** 2)
+    annualized_slope = (np.power(np.exp(slope), 250) - 1) * 100             #put in ranking table
+    return annualized_slope * (r_value ** 2)                                #put r^2 and adj. slope in table
 
+    # Market cap calculation is closing share price multiplied by shares outstanding. Can we get this from IB?
 class MarketCap(CustomFactor):
-    inputs = [USEquityPricing.close, morningstar.valuation.shares_outstanding]
+    inputs = [USEquityPricing.close, morningstar.valuation.shares_outstanding]  #add to ranking table
     window_length = 1
 
     def compute(self, today, assets, out, close, shares):
         out[:] = close[-1] * shares[-1]
 
-    # Creating a filter for all the stocks within the market cap requirements
+    # Creating a filter for all the stocks within the market cap requirements.
 def make_pipeline(context,sma_window_length, market_cap_limit):
     pipe = Pipeline()
 
-    # Now only stocks in the top N largest companies by market cap
+    # Now only stocks in the top N largest companies by market cap.
     market_cap = MarketCap()
-    top_N_market_cap = market_cap.top(market_cap_limit)
+    top_N_market_cap = market_cap.top(market_cap_limit)                        #display on ranking table
 
-    #Other filters to make sure we are getting a clean universe. Primary and domestic shares only.
+    #Other filters to make sure we are getting a clean universe. Primary and domestic shares only. Can we get from IB?
     is_primary_share = morningstar.share_class_reference.is_primary_share.latest
     is_not_adr = ~morningstar.share_class_reference.is_depositary_receipt.latest
 
     #### TREND FITLER ###########
-    #### If current stock price is bellow sma_window_length(100) moving average price, do not buy.
-
+    #### If current stock price is bellow sma_window_length(100) moving average price, do not buy. ##Change to sell?
     if context.use_stock_trend_filter:
         latest_price = USEquityPricing.close.latest
         sma = SimpleMovingAverage(inputs=[USEquityPricing.close], window_length=sma_window_length)
@@ -48,42 +49,46 @@ def make_pipeline(context,sma_window_length, market_cap_limit):
 
     return pipe
 
+    ################# Add another stock filter: if adj. slope <0, sell right away (always monitor). Rebalance whole portfolio.
+    if context.use_stock_trend_filter_2:
     #Test
 
-    # Create pipeline before market open of tradeable stocks.
+    # Create pipeline before market open of tradeable stocks. I want the pipeline updating constantly?
 def before_trading_start(context, data):
     context.selected_universe = pipeline_output('screen')
     context.assets = context.selected_universe.index
 
 def initialize(context):
     context.market = sid(8554)                      # Stock or fund used for market filter.
-    context.market_window = 100                     # Period lookback for market filter.
+    context.market_window = 200                     # Period lookback for market filter. May not use******
     context.atr_window = 20                         # Period lookback for ATR calculation.
-    context.talib_window = context.atr_window + 5   # Used in position sizing for ATR calculation. Not sure what +5 does.
-    context.risk_factor = 0.01                     # 0.01 = less position, more % but more risk. Take this out and replace with my method.#######
+ ??   context.talib_window = context.atr_window + 5   # Used in position sizing for ATR calculation. Not sure what +5 does.
+    #XXXXXXXXcontext.risk_factor = 0.01                     # 0.01 = less position, more % but more risk. Take this out and replace with my method.#######
 
-    context.momentum_window_length = 60             # Period lookback for momentum calculations.
+    context.momentum_window_length = 90             # Period lookback for momentum calculations.
     context.market_cap_limit = 500                  # Limit number of stocks based on market cap.
-    context.rank_table_percentile = .3             # Top .x of stocks on ranking table.
+    context.rank_table_percentile = .25             # Top .x of stocks on ranking table.
     context.significant_position_difference = 0.1   # Rebalance only if target weight is greater than .x difference.
-    context.min_momentum = 0.000                    # Minimum adjusted momentum requirement.
-    context.leverage_factor = 1.0                   # 1=2154%. Guy's version is 1.4=3226%. Determines how much leverage is used.
-    context.use_stock_trend_filter = 0              # Either 0 = Off, 1 = On.
+    context.min_momentum = 0.000                    # Minimum adjusted slope requirement.
+    context.leverage_factor = 1.0                   #### Look into how to maximize leverage constantly with IB platform.
+    context.use_stock_trend_filter = 0              # Either 0 = Off, 1 = On. SMA Filter.
     context.sma_window_length = 200                 # Used for the stock trend filter.
+   #add: context.use_stock_trend_filter_2 = 1            # Either 0 = Off, 1 = On. Adj. Slope Filter.
     context.use_market_trend_filter = 1             # Either 0 = Off, 1 = On. Filter on SPY. 0 wont work!
     context.use_average_true_range = 1              # Either 0 = Off, 1 = On. Manage risk with individual stock volatility.
-    context.average_true_rage_multipl_factor = 1    # Change the weight of the ATR. 1327%.
+  ??  context.average_true_rage_multipl_factor = 1    # Change the weight of the ATR. What does this do?
 
-    # Bring up pipeline for display as a screen.
+    # Bring up pipeline for display as a screen. Does this display data as a table?
     attach_pipeline(make_pipeline(context, context.sma_window_length,
                                   context.market_cap_limit), 'screen')
 
-    # Schedule my rebalance function
+    # Schedule my rebalance function. I want monthly rebalance with intraday monitoring. Maybe rebalance 1 hr after open?
+    # Maybe do away with scheduled rebalancing all together and rebalance every time a stock drops off the list or adjusted slope reverses?
     schedule_function(rebalance,
                       date_rules.month_start(),
                       time_rules.market_open(hours=1))
 
-    # Cancel all open orders at the end of each day.
+    # Cancel all open orders at the end of each day. Unsure what slippage is for on this?
     schedule_function(cancel_open_orders, date_rules.every_day(), time_rules.market_close())
     set_slippage(slippage.FixedSlippage(spread=0.00))
 
@@ -93,12 +98,14 @@ def cancel_open_orders(context, data):
         for order in open_orders[security]:
             cancel_order(order)
 
-    #record(lever=context.account.leverage,
+    # record(lever=context.account.leverage,
+    # Work to maximize leverage opportunities and avoid margin calls.
     record(exposure=context.account.leverage)
 
 def handle_data(context, data):
     pass
 
+    #### I want to only trigger a rebalance when a stock drops out of top .x of ranking table or falls bellow adjusted slope requirement.
 def rebalance(context, data):
     highs = data.history(context.assets, "high", context.talib_window, "1d")
     lows = data.history(context.assets, "low", context.talib_window, "1d")
@@ -128,8 +135,8 @@ def rebalance(context, data):
                 estimated_cash_balance -= estimated_cost
 
 
-    # Market history is not used with the trend filter disabled
-    # Removed for efficiency
+    ###### Market history is not used with the trend filter disabled. No need for market trend filter if triggered rebalance is done.
+
     if context.use_market_trend_filter:
         market_history = data.history(context.market, "price", context.market_window, "1d")  ##SPY##
         current_market_price = market_history[-1]
